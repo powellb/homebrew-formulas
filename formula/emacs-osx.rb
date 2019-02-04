@@ -36,12 +36,16 @@ class EmacsOsx < Formula
 	    system "make"
       system "make", "install"
 
-	    prefix.install "nextstep/Emacs.app"
-
-      # Follow MacPorts and don't install ctags from Emacs. This allows Vim
-      # and Emacs and ctags to play together without violence.
-      (bin/"ctags").unlink
-      (man1/"ctags.1.gz").unlink
+      prefix.install "nextstep/Emacs.app"
+      if (bin/"emacs").exist?
+         (bin/"emacs").unlink
+      end
+	    (bin/"emacs").write <<~EOS
+	      #!/bin/bash
+	      exec #{prefix}/Emacs.app/Contents/MacOS/Emacs "$@"
+	    EOS
+      bin.install_symlink prefix/"Emacs.app/Contents/MacOS/bin/emacsclient" => "emacsclient"
+      bin.install_symlink prefix/"Emacs.app/Contents/MacOS/bin/etags" => "etags"
     end
 
     def caveats

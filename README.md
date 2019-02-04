@@ -1,2 +1,2 @@
 # homebrew-formulas
-My own homebrew (brew.sh) formulas since they foolishly removed options
+My own homebrew (brew.sh) formulas since they won't allow options anymore. Analytics run amok...
