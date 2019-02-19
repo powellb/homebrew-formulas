@@ -7,7 +7,7 @@ class EmacsOsx < Formula
     head "git://git.savannah.gnu.org/emacs.git", :branch => "emacs-26"
 
     depends_on "gnutls"
-    depends_on "imagemagick@6"
+    depends_on "imagemagick"
     depends_on "libpng"
     depends_on "jpeg"
     depends_on "librsvg"
@@ -17,40 +17,40 @@ class EmacsOsx < Formula
       depends_on "gnu-sed" => :build
       depends_on "texinfo" => :build
       depends_on "pkg-config" => :build
-	    depends_on "gmp" => :build
-	    depends_on "jansson" => :build
+      depends_on "gmp" => :build
+      depends_on "jansson" => :build
     end
 
     def install
       args = %W[
-	         --prefix=#{prefix}
+           --prefix=#{prefix}
            --with-ns
            --with-modules
-           	]
+            ]
       if build.head?
         ENV.prepend_path "PATH", Formula["gnu-sed"].opt_libexec/"gnubin"
         system "./autogen.sh"
       end
 
-	    system "./configure", *args
-	    system "make"
+      system "./configure", *args
+      system "make"
       system "make", "install"
 
       prefix.install "nextstep/Emacs.app"
       if (bin/"emacs").exist?
          (bin/"emacs").unlink
       end
-	    (bin/"emacs").write <<~EOS
-	      #!/bin/bash
-	      exec #{prefix}/Emacs.app/Contents/MacOS/Emacs "$@"
-	    EOS
+      (bin/"emacs").write <<~EOS
+        #!/bin/bash
+        exec #{prefix}/Emacs.app/Contents/MacOS/Emacs "$@"
+      EOS
       bin.install_symlink prefix/"Emacs.app/Contents/MacOS/bin/emacsclient" => "emacsclient"
       bin.install_symlink prefix/"Emacs.app/Contents/MacOS/bin/etags" => "etags"
     end
 
     def caveats
-	    target_dir = File.expand_path("~/Applications")
-	    s = <<-EOS
+      target_dir = File.expand_path("~/Applications")
+      s = <<-EOS
       Run the following script to link the app into ~/Applications.
       /usr/bin/osascript << EOF
       tell application "Finder"
@@ -63,6 +63,6 @@ class EmacsOsx < Formula
     end
 
     test do
-	    assert_equal "4", shell_output("#{bin}/emacs --batch --eval=\"(print (+ 2 2))\"").strip
+      assert_equal "4", shell_output("#{bin}/emacs --batch --eval=\"(print (+ 2 2))\"").strip
     end
 end
